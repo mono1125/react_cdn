@@ -325,6 +325,12 @@
           event.preventDefault();
           alert("Submit");
         };
+        const handleKeyPress = (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            // alert('Pressed Enter Key');
+          };
+        };
 
         const formOfAdvancedSettings = useMemo(() => {
           const numOfSampleOptions = [];
@@ -373,6 +379,7 @@
                     value={formData.transmissionIntervalMs}
                     onChange={handleInputChange}
                     onBlur={handleInputBlur}
+                    onKeyPress={handleKeyPress}
                   />
                 </div>
                 {errorOfData.transmissionIntervalMs && (
@@ -437,6 +444,7 @@
                         value={formData.deviceId}
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
+                        onKeyPress={handleKeyPress}
                         disabled={formData.boardName === "Unselected"}
                       />
                     </div>
@@ -463,6 +471,7 @@
                           value={formData.macAddress}
                           onChange={handleInputChange}
                           onBlur={handleInputBlur}
+                          onKeyPress={handleKeyPress}
                           disabled={formData.boardName === "Unselected"}
                         />
                         {errorOfData.macAddress && (
@@ -485,6 +494,7 @@
                         value={formData.localIpAddress}
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
+                        onKeyPress={handleKeyPress}
                         disabled={
                           formData.useDhcp || formData.boardName === "Unselected"
                         }
@@ -508,6 +518,7 @@
                         value={formData.localSubnetMaskAddress}
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
+                        onKeyPress={handleKeyPress}
                         disabled={
                           formData.useDhcp || formData.boardName === "Unselected"
                         }
@@ -533,6 +544,7 @@
                         value={formData.localGatewayAddress}
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
+                        onKeyPress={handleKeyPress}
                         disabled={
                           formData.useDhcp || formData.boardName === "Unselected"
                         }
@@ -554,6 +566,7 @@
                           value={formData.useDhcp}
                           onChange={handleInputChange}
                           onBlur={handleInputBlur}
+                          onKeyPress={handleKeyPress}
                           disabled={formData.boardName === "Unselected"}
                         />
                         <span className="ml-2 is-size-6">DHCPを使用する</span>
@@ -585,6 +598,7 @@
                         value={formData.otherIpAddress}
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
+                        onKeyPress={handleKeyPress}
                         disabled={formData.boardName === "Unselected"}
                       />
                       {errorOfData.otherIpAddress && (
@@ -607,6 +621,7 @@
                         value={formData.otherPortNum}
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
+                        onKeyPress={handleKeyPress}
                         disabled={formData.boardName === "Unselected"}
                       />
                     </div>
@@ -630,6 +645,7 @@
                             value={formData.wifiSsid}
                             onChange={handleInputChange}
                             onBlur={handleInputBlur}
+                            onKeyPress={handleKeyPress}
                           />
                           {errorOfData.wifiSsid && (
                             <span className="has-text-danger-dark">
@@ -650,6 +666,7 @@
                             value={formData.wifiPass}
                             onChange={handleInputChange}
                             onBlur={handleInputBlur}
+                            onKeyPress={handleKeyPress}
                           />
                           {errorOfData.wifiPass && (
                             <span className="has-text-danger-dark">
@@ -670,6 +687,7 @@
                           value={formData.advancedSettingsFlg}
                           onChange={handleInputChange}
                           onBlur={handleInputBlur}
+                          onKeyPress={handleKeyPress}
                           disabled={formData.boardName === "Unselected"}
                         />
                         <span className="ml-2 is-size-6">
