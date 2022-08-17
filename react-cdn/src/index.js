@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./bulma.min.css";
 
@@ -149,8 +149,26 @@ const Form = () => {
     color: "",
   });
 
-  // バリデーションチェック結果のエラーメッセージ格納
-  const [errorOfData, setErrorOfData] = useState({
+  // Advanced Settings用
+  const numOfSampleOptions = [];
+  const averageTimesOptions = [];
+  for (let i = 5; i < 13; i++) {
+    const tmp = 2 ** i;
+    numOfSampleOptions.push({
+      value: tmp,
+      label: String(tmp),
+    });
+  }
+  for (let i = 0; i < 8; i++) {
+    const tmp = 2 ** i;
+    averageTimesOptions.push({
+      value: tmp,
+      label: String(tmp),
+    });
+  }
+
+  // デフォルト値
+  const defaultValuesOfError = {
     boardName: "",
     deviceId: "",
     macAddress: "",
@@ -166,7 +184,9 @@ const Form = () => {
     numOfSample: "",
     averageTimes: "",
     transmissionIntervalMs: "",
-  });
+  };
+  // バリデーションチェック結果のエラーメッセージ格納
+  const [errorOfData, setErrorOfData] = useState(defaultValuesOfError);
 
   // バリデーションチェック関数
   const validation = (name, value) => {
@@ -201,7 +221,7 @@ const Form = () => {
         if (formData.boardName === defaultValuesOfFormData.boardName) {
           check = "ボードを選択してください";
         } else if (formData.boardName === "RasberryPi pico") {
-          check = /(?:[0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}/.test(value)
+          check = /(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/.test(value)
             ? ""
             : "コロンを使用した形式で入力してください";
         } else if (formData.boardName === "ESP32") {
@@ -418,31 +438,36 @@ const Form = () => {
     let resValueArray = [];
     for (const [name, value] of Object.entries(formData)) {
       const [resKey, resValue] = validation(name, value);
-      // resValue === "" ? "" : resValueArray.push(resValue);
+      resObj = { ...resObj, [resKey]: resValue };
       if (resValue) {
         resValueArray.push(resValue);
-        resObj = { ...resObj, [resKey]: resValue };
       }
     }
     const result = resValueArray.length;
     setErrorOfData({ ...errorOfData, ...resObj });
     console.log(result);
+    let message = "";
+    let okBtnFlg = false;
     if (result !== 0) {
       console.log("handle is submit: result !== 0");
       console.log(resObj);
-      setMdlMessage(` 入力内容に誤りがあります。\n 修正してください`);
+      message = ` 入力内容に誤りがあります。\n 修正してください`;
+      okBtnFlg = false;
     } else {
       // バリデーションチェックOKなら送信ボタンが押せる
       // 送信はFormModalコンポネントから行う
-      setMdlMessage("送信しますか？");
-      setMdlOkBtnFlg(true);
+      message = "送信しますか？";
+      okBtnFlg = true;
     }
+    setMdlMessage(message);
+    setMdlOkBtnFlg(okBtnFlg);
     setMdlIsDisplay(true);
   };
 
   const resetForm = async () => {
     // フォームPOST後にフォームをリセットする
     setFormData(defaultValuesOfFormData);
+    setErrorOfData(defaultValuesOfError);
   };
   // モーダルでOKボタンが押されたあとに実行される送信処理
   const submit = async () => {
@@ -451,6 +476,7 @@ const Form = () => {
     let statusCode = 0;
     let message = "";
     let color = "";
+    setMdlOkBtnFlg(false);
     setIsLoading(true);
     try {
       const res = await fetch(url, {
@@ -492,106 +518,6 @@ const Form = () => {
       event.preventDefault();
     }
   };
-
-  const formOfAdvancedSettings = useMemo(() => {
-    const numOfSampleOptions = [];
-    const averageTimesOptions = [];
-    for (let i = 5; i < 13; i++) {
-      const tmp = 2 ** i;
-      numOfSampleOptions.push({
-        value: tmp,
-        label: String(tmp),
-      });
-    }
-    for (let i = 0; i < 8; i++) {
-      const tmp = 2 ** i;
-      averageTimesOptions.push({
-        value: tmp,
-        label: String(tmp),
-      });
-    }
-    return (
-      <>
-        <div className="field">
-          <label className="label">サンプル数 N</label>
-          <div className="control">
-            <div className="select">
-              <select
-                name="numOfSample"
-                value={formData.numOfSample}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-              >
-                {numOfSampleOptions.map(({ value, label }, index) => (
-                  <option key={index} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {errorOfData.numOfSample && (
-              <span className="has-text-danger-dark">
-                {errorOfData.numOfSample}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="field">
-          <label className="label">平均回数 N</label>
-          <div className="control">
-            <div className="select">
-              <select
-                name="averageTimes"
-                value={formData.averageTimes}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-              >
-                {averageTimesOptions.map(({ value, label }, index) => (
-                  <option key={index} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {errorOfData.averageTimes && (
-              <span className="has-text-danger-dark">
-                {errorOfData.averageTimes}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="field">
-          <label className="label">データ送信間隔 (millisec)</label>
-          <div className="control">
-            <input
-              name="transmissionIntervalMs"
-              className="input"
-              type="number"
-              placeholder="Number input"
-              style={{ width: "50%" }}
-              value={formData.transmissionIntervalMs}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              onKeyPress={handleKeyPress}
-            />
-          </div>
-          {errorOfData.transmissionIntervalMs && (
-            <span className="has-text-danger-dark">
-              {errorOfData.transmissionIntervalMs}
-            </span>
-          )}
-        </div>
-      </>
-    );
-  }, [
-    formData.advancedSettingsFlg,
-    formData.numOfSample,
-    formData.averageTimes,
-    formData.transmissionIntervalMs,
-    errorOfData.numOfSample,
-    errorOfData.averageTimes,
-    errorOfData.transmissionIntervalMs,
-  ]);
 
   return (
     <>
@@ -909,7 +835,81 @@ const Form = () => {
                 </div>
               </div>
 
-              {formData.advancedSettingsFlg && formOfAdvancedSettings}
+              {formData.advancedSettingsFlg && (
+                <>
+                  <div className="field">
+                    <label className="label">サンプル数 N</label>
+                    <div className="control">
+                      <div className="select">
+                        <select
+                          name="numOfSample"
+                          value={formData.numOfSample}
+                          onChange={handleInputChange}
+                          onBlur={handleInputBlur}
+                        >
+                          {numOfSampleOptions.map(({ value, label }, index) => (
+                            <option key={index} value={value}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {errorOfData.numOfSample && (
+                        <span className="has-text-danger-dark">
+                          {errorOfData.numOfSample}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="field">
+                    <label className="label">平均回数 N</label>
+                    <div className="control">
+                      <div className="select">
+                        <select
+                          name="averageTimes"
+                          value={formData.averageTimes}
+                          onChange={handleInputChange}
+                          onBlur={handleInputBlur}
+                        >
+                          {averageTimesOptions.map(
+                            ({ value, label }, index) => (
+                              <option key={index} value={value}>
+                                {label}
+                              </option>
+                            )
+                          )}
+                        </select>
+                      </div>
+                      {errorOfData.averageTimes && (
+                        <span className="has-text-danger-dark">
+                          {errorOfData.averageTimes}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="field">
+                    <label className="label">データ送信間隔 (millisec)</label>
+                    <div className="control">
+                      <input
+                        name="transmissionIntervalMs"
+                        className="input"
+                        type="number"
+                        placeholder="Number input"
+                        style={{ width: "50%" }}
+                        value={formData.transmissionIntervalMs}
+                        onChange={handleInputChange}
+                        onBlur={handleInputBlur}
+                        onKeyPress={handleKeyPress}
+                      />
+                    </div>
+                    {errorOfData.transmissionIntervalMs && (
+                      <span className="has-text-danger-dark">
+                        {errorOfData.transmissionIntervalMs}
+                      </span>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
