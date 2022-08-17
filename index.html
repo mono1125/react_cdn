@@ -220,7 +220,7 @@
               if (formData.boardName === defaultValuesOfFormData.boardName) {
                 check = "ボードを選択してください";
               } else if (formData.boardName === "RasberryPi pico") {
-                check = /(?:[0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2}/.test(value)
+                check = /(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/.test(value)
                   ? ""
                   : "コロンを使用した形式で入力してください";
               } else if (formData.boardName === "ESP32") {
@@ -408,6 +408,9 @@
                 `(validation check) name: ${name} value: ${value} typeOfValue: ${typeof value} error: ${check}`
               );
               return [name, check];
+            default:
+              console.log("例外エラー");
+              return ["default", "例外エラー"];
           }
         };
 
@@ -436,8 +439,8 @@
           let resValueArray = [];
           for (const [name, value] of Object.entries(formData)) {
             const [resKey, resValue] = validation(name, value);
-            resValue === "" ? "" : resValueArray.push(resValue);
             if (resValue) {
+              resValueArray.push(resValue);
               resObj = { ...resObj, [resKey]: resValue };
             }
           }
