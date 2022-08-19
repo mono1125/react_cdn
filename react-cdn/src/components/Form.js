@@ -247,7 +247,7 @@ export const Form = () => {
           String(formData.numOfSample) !==
           String(defaultValuesOfFormData.numOfSample)
         ) {
-          check = "Advanced Settings Flgがtrueになっていません";
+          check = "Advanced Settingsが有効になっていません";
         } else {
           check = "";
         }
@@ -263,7 +263,7 @@ export const Form = () => {
           String(formData.averageTimes) !==
           String(defaultValuesOfFormData.averageTimes)
         ) {
-          check = "Advanced Settings Flgがtrueになっていません";
+          check = "Advanced Settingsが有効になっていません";
         } else {
           check = "";
         }
@@ -290,7 +290,7 @@ export const Form = () => {
           String(formData.transmissionIntervalMs) !==
           String(defaultValuesOfFormData.transmissionIntervalMs)
         ) {
-          check = "Advanced Settings Flgがtrueになっていません";
+          check = "Advanced Settingsが有効になっていません";
         } else {
           check = "";
         }
@@ -745,12 +745,12 @@ export const Form = () => {
                           ))}
                         </select>
                       </div>
-                      {errorOfData.numOfSample && (
-                        <span className="has-text-danger-dark">
-                          {errorOfData.numOfSample}
-                        </span>
-                      )}
                     </div>
+                    {errorOfData.numOfSample && (
+                      <span className="has-text-danger-dark">
+                        {errorOfData.numOfSample}
+                      </span>
+                    )}
                   </div>
                   <div className="field">
                     <label className="label">平均回数 N</label>
@@ -771,12 +771,12 @@ export const Form = () => {
                           )}
                         </select>
                       </div>
-                      {errorOfData.averageTimes && (
-                        <span className="has-text-danger-dark">
-                          {errorOfData.averageTimes}
-                        </span>
-                      )}
                     </div>
+                    {errorOfData.averageTimes && (
+                      <span className="has-text-danger-dark">
+                        {errorOfData.averageTimes}
+                      </span>
+                    )}
                   </div>
                   <div className="field">
                     <label className="label">データ送信間隔 (millisec)</label>
