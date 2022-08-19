@@ -39,7 +39,6 @@ export const CurrentSettings = () => {
     const time = await getDate();
     try {
       const res = await fetch(url);
-      jsonRes = await res.json();
       statusCode = res.status;
       if (!res.ok) {
         console.error("response.ok: ", res.ok);
@@ -47,6 +46,7 @@ export const CurrentSettings = () => {
         console.error("response.statusText: ", res.statusText);
         throw new Error(res.statusText);
       }
+      jsonRes = await res.json();
       message = `データを取得しました。\n【ステータスコード】\n  ${statusCode}`;
       console.log(jsonRes);
     } catch (e) {
@@ -83,6 +83,7 @@ export const CurrentSettings = () => {
         <span
           className="mt-4 ml-4 is-size-5 has-text-weight-semibold"
           style={{ verticalAlign: "middle" }}
+          data-testid="current-settings-title"
         >
           現在の設定値
         </span>
@@ -90,6 +91,7 @@ export const CurrentSettings = () => {
           <button
             className="button is-info is-outlined ml-4 is-loading"
             style={{ verticalAlign: "middle" }}
+            data-testid="update-btn-loading"
           >
             更新
           </button>
@@ -98,20 +100,35 @@ export const CurrentSettings = () => {
             className="button is-info is-outlined ml-4"
             style={{ verticalAlign: "middle" }}
             onClick={onBtnClick}
+            data-testid="update-btn"
           >
             更新
           </button>
         )}
-        <p className="mt-2 ml-4">取得時刻: {data.time}</p>
+        <p className="mt-2 ml-4" data-testid="get-time">
+          取得時刻: {data.time}
+        </p>
         <div className="columns mt-3 mx-3 is-centered">
           <div className="column is-1" />
           <div className="column is-one-third">
-            <p className="has-text-weight-bold">Board</p>
-            <p>{data.settings.boardName}</p>
+            <p className="has-text-weight-bold" data-testid="label-board">
+              Board
+            </p>
+            {data.settings.boardName ? (
+              <p data-testid="data-board">{data.settings.boardName}</p>
+            ) : (
+              <p data-testid="data-board-nodata">-----</p>
+            )}
           </div>
           <div className="column is-one-third">
-            <p className="has-text-weight-bold">Device ID</p>
-            <p>{data.settings.deviceId}</p>
+            <p className="has-text-weight-bold" data-testid="label-deviceid">
+              Device ID
+            </p>
+            {typeof data.settings.deviceId !== "undefined" ? (
+              <p data-testid="data-deviceid">{data.settings.deviceId}</p>
+            ) : (
+              <p data-testid="data-deviceid-nodata">-----</p>
+            )}
           </div>
           <div className="column is-one-third"></div>
         </div>
@@ -120,49 +137,126 @@ export const CurrentSettings = () => {
           <div className="column is-one-third">
             {data.settings.boardName === "RasberryPi pico" ? (
               <>
-                <p className="has-text-weight-bold">Macアドレス</p>
+                <p
+                  className="has-text-weight-bold"
+                  data-testid="label-mac-address"
+                >
+                  Macアドレス
+                </p>
                 {data.settings.macAddress ? (
-                  <p className="mb-4">{data.settings.macAddress}</p>
+                  <p className="mb-4" data-testid="data-mac-address">
+                    {data.settings.macAddress}
+                  </p>
                 ) : (
-                  <p className="mb-4">-----</p>
+                  <p className="mb-4" data-testid="data-mac-address-nodata">
+                    -----
+                  </p>
                 )}
               </>
             ) : (
               ""
             )}
-            <p className="has-text-weight-bold">自局IPアドレス</p>
-            <p>{data.settings.localIpAddress}</p>
-            <p className="has-text-weight-bold mt-4">自局サブネットマスク</p>
-            <p>{data.settings.localSubnetMaskAddress}</p>
-            <p className="has-text-weight-bold mt-4">
+            <p
+              className="has-text-weight-bold"
+              data-testid="label-local-ipaddress"
+            >
+              自局IPアドレス
+            </p>
+            {data.settings.localIpAddress ? (
+              <p data-testid="data-local-ipaddress">
+                {data.settings.localIpAddress}
+              </p>
+            ) : (
+              <p data-testid="data-local-ipaddress-nodata">-----</p>
+            )}
+            <p
+              className="has-text-weight-bold mt-4"
+              data-testid="label-local-subnetmask"
+            >
+              自局サブネットマスク
+            </p>
+            {data.settings.localSubnetMaskAddress ? (
+              <p data-testid="data-local-subnetmask">
+                {data.settings.localSubnetMaskAddress}
+              </p>
+            ) : (
+              <p data-testid="data-local-subnetmask-nodata">-----</p>
+            )}
+            <p
+              className="has-text-weight-bold mt-4"
+              data-testid="label-local-gatewayaddress"
+            >
               自局ゲートウェイアドレス
             </p>
             {data.settings.localGatewayAddress ? (
-              <p>{data.settings.localGatewayAddress}</p>
+              <p data-testid="data-local-gatewayaddress">
+                {data.settings.localGatewayAddress}
+              </p>
             ) : (
-              <p>-----</p>
+              <p data-testid="data-local-gatewayaddress-nodata">-----</p>
             )}
-            <p className="has-text-weight-bold mt-4">DHCPを使用するか</p>
-            {data.settings.useDhcp ? <p>使用する</p> : <p>使用しない</p>}
+            <p
+              className="has-text-weight-bold mt-4"
+              data-testid="label-use-dhcp"
+            >
+              DHCPを使用するか
+            </p>
+            {data.settings.useDhcp ? (
+              <p data-testid="data-use-dhcp">使用する</p>
+            ) : (
+              <p data-testid="data-not-use-dhcp">使用しない</p>
+            )}
           </div>
           <div className="column is-one-third">
-            <p className="has-text-weight-bold">他局IPアドレス</p>
-            <p>{data.settings.otherIpAddress}</p>
-            <p className="has-text-weight-bold mt-4">ポート番号</p>
-            <p>{data.settings.otherIpAddress}</p>
+            <p
+              className="has-text-weight-bold"
+              data-testid="label-other-ipaddress"
+            >
+              他局IPアドレス
+            </p>
+            {data.settings.otherIpAddress ? (
+              <p data-testid="data-other-ipaddress">
+                {data.settings.otherIpAddress}
+              </p>
+            ) : (
+              <p data-testid="data-other-ipaddress-nodata">-----</p>
+            )}
+            <p
+              className="has-text-weight-bold mt-4"
+              data-testid="label-other-portnum"
+            >
+              ポート番号
+            </p>
+            {data.settings.otherPortNum ? (
+              <p data-testid="data-other-portnum">
+                {data.settings.otherPortNum}
+              </p>
+            ) : (
+              <p data-testid="data-other-portnum-nodata">-----</p>
+            )}
             {data.settings.boardName !== "RasberryPi pico" ? (
               <>
-                <p className="has-text-weight-bold mt-4">Wi-Fi SSID</p>
+                <p
+                  className="has-text-weight-bold mt-4"
+                  data-testid="label-wifi-ssid"
+                >
+                  Wi-Fi SSID
+                </p>
                 {data.settings.wifiSsid ? (
-                  <p>{data.settings.wifiSsid}</p>
+                  <p data-testid="data-wifi-ssid">{data.settings.wifiSsid}</p>
                 ) : (
-                  <p>-----</p>
+                  <p data-testid="data-wifi-ssid-nodata">-----</p>
                 )}
-                <p className="has-text-weight-bold mt-4">Wi-Fi Password</p>
+                <p
+                  className="has-text-weight-bold mt-4"
+                  data-testid="label-wifi-pass"
+                >
+                  Wi-Fi Password
+                </p>
                 {data.settings.wifiPass ? (
-                  <p>{data.settings.wifiPass}</p>
+                  <p data-testid="data-wifi-pass">{data.settings.wifiPass}</p>
                 ) : (
-                  <p>-----</p>
+                  <p data-testid="data-wifi-pass-nodata">-----</p>
                 )}
               </>
             ) : (
@@ -170,23 +264,77 @@ export const CurrentSettings = () => {
             )}
           </div>
           <div className="column is-one-third">
-            <p className="has-text-weight-bold">Advanced Settingsが有効か</p>
-            {data.settings.advancedSettingsFlg ? <p>有効</p> : <p>無効</p>}
-            <p className="has-text-weight-bold mt-4">
+            <p
+              className="has-text-weight-bold"
+              data-testid="label-advanced-settings"
+            >
+              Advanced Settingsが有効か
+            </p>
+            {data.settings.advancedSettingsFlg ? (
+              <p data-testid="data-advanced-settings">有効</p>
+            ) : (
+              <p data-testid="data-advanced-settings-false">無効</p>
+            )}
+            <p
+              className="has-text-weight-bold mt-4"
+              data-testid="label-num-of-sample"
+            >
               サンプル数 N{" "}
-              {data.settings.advancedSettingsFlg ? "" : <span>（既定値）</span>}
+              {data.settings.advancedSettingsFlg ? (
+                ""
+              ) : (
+                <span data-testid="label-num-of-sample-default">
+                  （既定値）
+                </span>
+              )}
             </p>
-            <p>{data.settings.numOfSample}</p>
-            <p className="has-text-weight-bold mt-4">
+            {data.settings.numOfSample ? (
+              <p data-testid="data-num-of-sample">
+                {data.settings.numOfSample}
+              </p>
+            ) : (
+              <p data-testid="data-num-of-sample-nodata">-----</p>
+            )}
+            <p
+              className="has-text-weight-bold mt-4"
+              data-testid="label-average-times"
+            >
               平均回数{" "}
-              {data.settings.advancedSettingsFlg ? "" : <span>（既定値）</span>}
+              {data.settings.advancedSettingsFlg ? (
+                ""
+              ) : (
+                <span data-testid="label-average-times-default">
+                  （既定値）
+                </span>
+              )}
             </p>
-            <p>{data.settings.averageTimes}</p>
-            <p className="has-text-weight-bold mt-4">
+            {data.settings.averageTimes ? (
+              <p data-testid="data-average-times">
+                {data.settings.averageTimes}
+              </p>
+            ) : (
+              <p data-testid="data-average-times-nodata">-----</p>
+            )}
+            <p
+              className="has-text-weight-bold mt-4"
+              data-testid="label-transmission-interval"
+            >
               送信間隔 (ms){" "}
-              {data.settings.advancedSettingsFlg ? "" : <span>（既定値）</span>}
+              {data.settings.advancedSettingsFlg ? (
+                ""
+              ) : (
+                <span data-testid="label-transmission-interval-default">
+                  （既定値）
+                </span>
+              )}
             </p>
-            <p>{data.settings.transmissionIntervalMs}</p>
+            {data.settings.transmissionIntervalMs ? (
+              <p data-testid="data-transmission-interval">
+                {data.settings.transmissionIntervalMs}
+              </p>
+            ) : (
+              <p data-testid="data-transmission-interval-nodata">-----</p>
+            )}
           </div>
         </div>
       </div>
