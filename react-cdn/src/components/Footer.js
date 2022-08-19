@@ -5,7 +5,7 @@ export const Footer = () => {
     <div className="container mb-3">
       <footer className="footer">
         <div className="content has-text-centered">
-          <p>
+          <p data-testid="footer-content">
             <strong>Bulma</strong> by{" "}
             <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is
             licensed
