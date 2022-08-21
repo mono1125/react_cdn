@@ -375,16 +375,16 @@ export const Form = () => {
         mode: "cors",
         body: JSON.stringify(formData),
       });
-      const jsonRes = await res.json();
       statusCode = res.status;
       console.log(`status code: ${statusCode}`);
-      console.log(`POST RESPONSE: ${jsonRes.message}`);
       if (!res.ok) {
         console.error("response.ok: ", res.ok);
         console.error("response.status: ", res.status);
         console.error("response.statusText: ", res.statusText);
         throw new Error(res.statusText);
       }
+      const jsonRes = await res.json();
+      console.log(`POST RESPONSE: ${jsonRes.message}`);
       message = `送信しました。\n【ステータスコード】\n  ${statusCode}\n【サーバからのレスポンス】\n  ${jsonRes.message}`;
       title = "送信成功";
       color = "is-success";
