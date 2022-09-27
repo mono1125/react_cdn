@@ -23,7 +23,15 @@
     "project": ["./tsconfig.json"],
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "jest", "jsx-a11y", "react", "react-hooks"],
+  "plugins": [
+    "@typescript-eslint",
+    "jest",
+    "jsx-a11y",
+    "react",
+    "react-hooks",
+    "jest-dom",
+    "testing-library"
+  ],
   "rules": {
     "padding-line-between-statements": [
       "error",
@@ -119,7 +127,12 @@
       "env": {
         "jest/globals": true
       },
-      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+      "extends": [
+        "plugin:jest/recommended",
+        "plugin:jest-dom/recommended",
+        "plugin:testing-library/react",
+        "plugin:jest/style"
+      ],
       "plugins": ["jest"]
     }
   ],
